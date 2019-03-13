@@ -18,12 +18,12 @@ public:
 protected:
   void changesCallback(string world_name, Header header, Invalidations invalidations)
   {
-    for(const auto node_id : invalidations.node_ids_updated)
-      ROS_INFO("Received node <%s> update", node_id.c_str());
-    for(const auto node_id : invalidations.situation_ids_updated)
-      ROS_INFO("Received situation <%s> update", node_id.c_str());
-    for(const auto node_id : invalidations.mesh_ids_updated)
-      ROS_INFO("Received mesh <%s> update", node_id.c_str());
+    for(const auto id : invalidations.node_ids_updated)
+      ROS_INFO("Received node <%s> update", id.c_str());
+    for(const auto id : invalidations.situation_ids_updated)
+      ROS_INFO("Received situation <%s> update", id.c_str());
+    for(const auto id : invalidations.mesh_ids_updated)
+      ROS_INFO("Received mesh <%s> update", id.c_str());
   }
 
   UnderworldsProxyPtr ctx_;
@@ -31,7 +31,7 @@ protected:
 
 int main(int argc, char **argv)
 {
-  ros::init(argc, argv, "reader_exaple");
+  ros::init(argc, argv, "reader_example");
   NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
   ReaderExample reader = ReaderExample(nh);
   ros::spin();
