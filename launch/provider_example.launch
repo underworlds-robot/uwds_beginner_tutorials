@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+
+  <param name="filename" value="$(find uwds_beginner_tutorials)/res/adream_empty.blend"/>
+
+  <node name="provider_example" pkg="uwds_beginner_tutorials" type="provider_example" args="" output="screen" respawn="false"/>
+
+</launch>
