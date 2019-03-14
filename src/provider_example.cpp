@@ -1,5 +1,6 @@
 #include <ros/ros.h>
 #include <uwds/uwds.h>
+#include <nodelet/nodelet.h>
 
 typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
 
@@ -19,6 +20,26 @@ public:
 protected:
   UnderworldsProxyPtr ctx_;
 };
+
+typedef boost::shared_ptr<ProviderExample> ProviderExamplePtr;
+
+class ProviderExampleNodelet : public nodelet::Nodelet
+{
+public:
+  void onInit()
+  {
+    nh_ = boost::make_shared<ros::NodeHandle>(getMTNodeHandle());
+    string filename;
+    nh_->param<string>("filename", filename, "");
+    provider_example_ = boost::make_shared<ProviderExample>(nh_, filename);
+  }
+protected:
+  NodeHandlePtr nh_;
+  ProviderExamplePtr provider_example_;
+};
+
+#include <pluginlib/class_list_macros.h>
+PLUGINLIB_EXPORT_CLASS(ProviderExampleNodelet, nodelet::Nodelet)
 
 int main(int argc, char **argv)
 {

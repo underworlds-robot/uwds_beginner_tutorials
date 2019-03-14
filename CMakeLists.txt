@@ -138,7 +138,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(provider_example src/provider_example.cpp)
-add_executable(server_example src/server_example.cpp)
+add_executable(filter_example src/filter_example.cpp)
 add_executable(reader_example src/reader_example.cpp)
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -150,12 +150,12 @@ add_executable(reader_example src/reader_example.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 add_dependencies(provider_example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(server_example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(filter_example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(reader_example ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(provider_example ${catkin_LIBRARIES} assimp)
-target_link_libraries(server_example ${catkin_LIBRARIES} assimp)
+target_link_libraries(filter_example ${catkin_LIBRARIES} assimp)
 target_link_libraries(reader_example ${catkin_LIBRARIES} assimp)
 
 #############
