@@ -11,10 +11,10 @@ using namespace uwds;
 class FilterExample
 {
 public:
-  FilterExample(NodeHandlePtr nh, string query)
+  FilterExample(NodeHandlePtr nh, NodeHandlePtr pnh, string query)
   {
     query_ = query;
-    ctx_ = boost::make_shared<UnderworldsProxy>(nh, "filter_example", FILTER);
+    ctx_ = boost::make_shared<UnderworldsProxy>(nh, pnh, "filter_example", FILTER);
     if(ctx_->worlds()["env"].connect(bind(&FilterExample::onChanges, this, _1, _2, _3)));
   }
 protected:
@@ -54,12 +54,14 @@ public:
   void onInit()
   {
     nh_ = boost::make_shared<ros::NodeHandle>(getMTNodeHandle());
+    pnh_ = boost::make_shared<ros::NodeHandle>(getMTPrivateNodeHandle());
     string query;
     nh_->param<string>("query", query, "");
-    filter_example_ = boost::make_shared<FilterExample>(nh_, query);
+    filter_example_ = boost::make_shared<FilterExample>(nh_, pnh_, query);
   }
 protected:
   NodeHandlePtr nh_;
+  NodeHandlePtr pnh_;
   FilterExamplePtr filter_example_;
 };
 
@@ -71,8 +73,9 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "filter_example");
   NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
+  NodeHandlePtr pnh = boost::make_shared<ros::NodeHandle>("~");
   string query;
   nh->param<string>("query", query, "");
-  FilterExample filter = FilterExample(nh, query);
+  FilterExample filter = FilterExample(nh, pnh, query);
   ros::spin();
 }

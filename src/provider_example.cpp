@@ -11,9 +11,9 @@ using namespace uwds;
 class ProviderExample
 {
 public:
-  ProviderExample(NodeHandlePtr nh, string filename)
+  ProviderExample(NodeHandlePtr nh, NodeHandlePtr pnh, string filename)
   {
-    ctx_ = boost::make_shared<UnderworldsProxy>(nh, "provider_example", PROVIDER);
+    ctx_ = boost::make_shared<UnderworldsProxy>(nh, pnh, "provider_example", PROVIDER);
     if(ctx_->worlds()["env"].pushSceneFrom3DFile(filename))
       ROS_INFO("Successfully load file !");
   }
@@ -29,12 +29,14 @@ public:
   void onInit()
   {
     nh_ = boost::make_shared<ros::NodeHandle>(getMTNodeHandle());
+    pnh_ = boost::make_shared<ros::NodeHandle>(getMTPrivateNodeHandle());
     string filename;
     nh_->param<string>("filename", filename, "");
-    provider_example_ = boost::make_shared<ProviderExample>(nh_, filename);
+    provider_example_ = boost::make_shared<ProviderExample>(nh_, pnh_, filename);
   }
 protected:
   NodeHandlePtr nh_;
+  NodeHandlePtr pnh_;
   ProviderExamplePtr provider_example_;
 };
 
@@ -45,8 +47,9 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "provider_example");
   NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
+  NodeHandlePtr pnh = boost::make_shared<ros::NodeHandle>("~");
   string filename;
   nh->param<string>("filename", filename, "");
-  ProviderExample provider = ProviderExample(nh, filename);
+  ProviderExample provider = ProviderExample(nh, pnh, filename);
   ros::spin();
 }

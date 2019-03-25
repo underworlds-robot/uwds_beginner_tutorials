@@ -11,9 +11,9 @@ using namespace uwds;
 class ReaderExample
 {
 public:
-  ReaderExample(NodeHandlePtr nh)
+  ReaderExample(NodeHandlePtr nh, NodeHandlePtr pnh)
   {
-    ctx_ = boost::make_shared<UnderworldsProxy>(nh, "reader_example", READER);
+    ctx_ = boost::make_shared<UnderworldsProxy>(nh, pnh, "reader_example", READER);
     if(ctx_->worlds()["env"].connect(bind(&ReaderExample::onChanges, this, _1, _2, _3)));
       ROS_INFO("Ready to listen for changes !");
   }
@@ -38,10 +38,12 @@ public:
   void onInit()
   {
     nh_ = boost::make_shared<ros::NodeHandle>(getMTNodeHandle());
-    reader_example_ = boost::make_shared<ReaderExample>(nh_);
+    nh_ = boost::make_shared<ros::NodeHandle>(getMTPrivateNodeHandle());
+    reader_example_ = boost::make_shared<ReaderExample>(nh_, pnh_);
   }
 protected:
   NodeHandlePtr nh_;
+  NodeHandlePtr pnh_;
   ReaderExamplePtr reader_example_;
 };
 
@@ -52,6 +54,7 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "reader_example");
   NodeHandlePtr nh = boost::make_shared<ros::NodeHandle>();
-  ReaderExample reader = ReaderExample(nh);
+  NodeHandlePtr pnh = boost::make_shared<ros::NodeHandle>("~");
+  ReaderExample reader = ReaderExample(nh, pnh);
   ros::spin();
 }
