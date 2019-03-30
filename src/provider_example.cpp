@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 #include <uwds/uwds.h>
-#include <nodelet/nodelet.h>
 
 typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
 
@@ -14,34 +13,12 @@ public:
   ProviderExample(NodeHandlePtr nh, NodeHandlePtr pnh, string filename)
   {
     ctx_ = boost::make_shared<UnderworldsProxy>(nh, pnh, "provider_example", PROVIDER);
-    if(ctx_->worlds()["env"].pushSceneFrom3DFile(filename))
+    if(ctx_->worlds()["robot/env"].pushSceneFrom3DFile(filename))
       ROS_INFO("Successfully load file !");
   }
 protected:
   UnderworldsProxyPtr ctx_;
 };
-
-typedef boost::shared_ptr<ProviderExample> ProviderExamplePtr;
-
-class ProviderExampleNodelet : public nodelet::Nodelet
-{
-public:
-  void onInit()
-  {
-    nh_ = boost::make_shared<ros::NodeHandle>(getMTNodeHandle());
-    pnh_ = boost::make_shared<ros::NodeHandle>(getMTPrivateNodeHandle());
-    string filename;
-    nh_->param<string>("filename", filename, "");
-    provider_example_ = boost::make_shared<ProviderExample>(nh_, pnh_, filename);
-  }
-protected:
-  NodeHandlePtr nh_;
-  NodeHandlePtr pnh_;
-  ProviderExamplePtr provider_example_;
-};
-
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS(ProviderExampleNodelet, nodelet::Nodelet)
 
 int main(int argc, char **argv)
 {

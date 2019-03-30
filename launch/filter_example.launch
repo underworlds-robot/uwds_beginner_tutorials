@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launch>
 
-  <param name="query" value="object?"/>
+  <param name="regex" value="red|orange"/>
 
   <node name="filter_example" pkg="uwds_beginner_tutorials" type="filter_example" args="" output="screen" respawn="false"/>
 

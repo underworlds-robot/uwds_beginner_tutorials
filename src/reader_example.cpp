@@ -1,6 +1,5 @@
 #include <ros/ros.h>
 #include <uwds/uwds.h>
-#include <nodelet/nodelet.h>
 
 typedef boost::shared_ptr<ros::NodeHandle> NodeHandlePtr;
 
@@ -14,41 +13,21 @@ public:
   ReaderExample(NodeHandlePtr nh, NodeHandlePtr pnh)
   {
     ctx_ = boost::make_shared<UnderworldsProxy>(nh, pnh, "reader_example", READER);
-    if(ctx_->worlds()["env"].connect(bind(&ReaderExample::onChanges, this, _1, _2, _3)));
+    if(ctx_->worlds()["robot/env_filtered"].connect(bind(&ReaderExample::onChanges, this, _1, _2, _3)));
       ROS_INFO("Ready to listen for changes !");
   }
 protected:
   void onChanges(string world_name, Header header, Invalidations invalidations)
   {
     for(const auto id : invalidations.node_ids_updated)
-      ROS_INFO("Received node <%s>", id.c_str());
+      ROS_INFO("Received node <(%s)%s>", ctx_->worlds()["robot/env_filtered"].scene().nodes()[id].name.c_str(), id.c_str());
     for(const auto id : invalidations.situation_ids_updated)
-      ROS_INFO("Received situation <%s>", id.c_str());
+      ROS_INFO("Received situation <(%s)%s>", ctx_->worlds()["robot/env_filtered"].timeline().situations()[id].description.c_str(), id.c_str());
     for(const auto id : invalidations.mesh_ids_updated)
-      ROS_INFO("Received mesh <%s>", id.c_str());
+      ROS_INFO("Received mesh <%s>", ctx_->meshes()[id].id.c_str());
   }
   UnderworldsProxyPtr ctx_;
 };
-
-typedef boost::shared_ptr<ReaderExample> ReaderExamplePtr;
-
-class ReaderExampleNodelet : public nodelet::Nodelet
-{
-public:
-  void onInit()
-  {
-    nh_ = boost::make_shared<ros::NodeHandle>(getMTNodeHandle());
-    nh_ = boost::make_shared<ros::NodeHandle>(getMTPrivateNodeHandle());
-    reader_example_ = boost::make_shared<ReaderExample>(nh_, pnh_);
-  }
-protected:
-  NodeHandlePtr nh_;
-  NodeHandlePtr pnh_;
-  ReaderExamplePtr reader_example_;
-};
-
-#include <pluginlib/class_list_macros.h>
-PLUGINLIB_EXPORT_CLASS(ReaderExampleNodelet, nodelet::Nodelet)
 
 int main(int argc, char **argv)
 {
